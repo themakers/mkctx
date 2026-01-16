@@ -1,14 +1,28 @@
 default: help
 
-.PHONY: help
-help:	## show this help and exit
-	@egrep -h '^[a-zA-Z0-9_.-]+:.*## ' $(MAKEFILE_LIST) | \
-	awk 'BEGIN{FS="## " } {t=$$1; sub(/:.*/,"",t); printf "\033[36m  %-25s\033[0m %s\n", t, $$2}'
-
 .PHONY: build
-build:	## build
+build: ## build
 	CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"'
 
 .PHONY: install
 install: ## install
 	CGO_ENABLED=0 go install -a -ldflags '-extldflags "-static"'
+
+.PHONY: upx
+upx: build ## upx
+	upx -9 mkctx
+
+
+.PHONY: help
+help: ## show this help
+	@awk '\
+	/^[a-zA-Z0-9_.-]+:/ { \
+		t=$$0; sub(/:.*/,"",t); \
+		if (t ~ /^\./) next; \
+		h=""; \
+		if ($$0 ~ /[[:space:]]##[[:space:]]+[^[:space:]]/) { \
+			h=$$0; sub(/.*[[:space:]]##[[:space:]]+/,"",h); \
+			sub(/[ \t]+$$/,"",h); \
+		} \
+		printf "\x1b[36m  %-25s\x1b[0m %s\n", t, h; \
+	}' $(MAKEFILE_LIST)
