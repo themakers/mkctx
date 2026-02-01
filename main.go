@@ -860,6 +860,6 @@ func main() {
 	if fm.confirmed {
 		selected := fm.selectedFiles()
 		outAbs, size, tokens := buildMarkdown(fm.base, selected, fm.allowBinary)
-		fmt.Printf("path=%s\nbytes=%d\ntokens=%d\n", outAbs, size, tokens)
+		fmt.Printf("%s\nbytes=%d\ntokens=%d\n", outAbs, size, tokens)
 	}
 }
